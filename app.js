@@ -5,6 +5,7 @@ import errorMiddleware from ".//middlewares/error.middleware.js";
 import rateLimiter from "./middlewares/rateLimiter.middleware.js";
 import { PORT } from "./config/env.js";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(rateLimiter);
+app.use(helmet());
 
 app.use("/api/v1", routes);
 
