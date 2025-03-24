@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import hpp from "hpp";
 import xssClean from "xss-clean";
+import cors from "cors";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(rateLimiter);
 app.use(helmet());
 app.use(hpp());
 app.use(xssClean());
+app.use(cors());
 
 app.use("/api/v1", routes);
 
