@@ -12,7 +12,7 @@ const subscriptionSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: [true, "Subscription price is required"],
-      min: [0, "Price must be greater then 0"],
+      min: [0, "Price must be greater than 0"],
     },
     currency: {
       type: String,
@@ -22,17 +22,18 @@ const subscriptionSchema = new mongoose.Schema(
     frequency: {
       type: String,
       enum: ["Daily", "Weekly", "Monthly", "Yearly"],
+      required: true,
     },
-    catagory: {
+    category: {
       type: String,
       enum: [
-        "sports",
-        "news",
-        "entertainment",
-        "lifestyle",
-        "technology",
-        "finance",
-        "other",
+        "Sports",
+        "News",
+        "Entertainment",
+        "Lifestyle",
+        "Technology",
+        "Finance",
+        "Other",
       ],
       required: true,
     },
@@ -46,7 +47,7 @@ const subscriptionSchema = new mongoose.Schema(
       enum: ["active", "cancelled", "expired"],
       default: "active",
     },
-    startData: {
+    startDate: {
       type: Date,
       required: true,
       validate: {
@@ -54,12 +55,11 @@ const subscriptionSchema = new mongoose.Schema(
         message: "Start date must be in the past",
       },
     },
-    renewalData: {
+    renewalDate: {
       type: Date,
-      // required: true,
       validate: {
         validator: function (value) {
-          value > this.startData;
+          return value > this.startDate && value >= new Date();
         },
         message: "Renewal date must be after the start date",
       },
@@ -75,16 +75,21 @@ const subscriptionSchema = new mongoose.Schema(
 );
 
 subscriptionSchema.pre("save", function (next) {
-  if (!this.renewalData) {
-    const renewalPeriods = { daily: 1, weekly: 7, monthly: 30, yearly: 365 };
+  if (!this.renewalDate) {
+    const renewalPeriods = {
+      Daily: 1,
+      Weekly: 7,
+      Monthly: 30,
+      Yearly: 365,
+    };
 
-    this.renewalData = new Date(this.startData);
-    this.renewalData.setDate(
-      this.renewalData.getDate() + renewalPeriods[this.frequency]
+    this.renewalDate = new Date(this.startDate);
+    this.renewalDate.setDate(
+      this.renewalDate.getDate() + renewalPeriods[this.frequency]
     );
   }
 
-  if (this.renewalData < new Date()) {
+  if (this.renewalDate < new Date()) {
     this.status = "expired";
   }
 
