@@ -6,6 +6,8 @@ import rateLimiter from "./middlewares/rateLimiter.middleware.js";
 import { PORT } from "./config/env.js";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
+import hpp from "hpp";
+import xssClean from "xss-clean";
 
 const app = express();
 
@@ -15,6 +17,8 @@ app.use(cookieParser());
 
 app.use(rateLimiter);
 app.use(helmet());
+app.use(hpp());
+app.use(xssClean());
 
 app.use("/api/v1", routes);
 
